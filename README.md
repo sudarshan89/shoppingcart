@@ -1,0 +1,1 @@
+Shopping cart modelling solution based on Code Kata described @ http://codekata.pragprog.com/2007/01/code_kata_one_s.html
