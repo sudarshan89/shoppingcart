@@ -7,7 +7,7 @@ package com.shoppingcart.domain;
  * Time: 3:15 PM
  */
 public enum Unit {
-    QUANTITY(""),WEIGHTED("gm");
+    QUANTITY(""),WEIGHTED("kg");
     private String measure="";
 
     private Unit(String measure){

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,18 +14,100 @@ import java.math.BigDecimal;
  */
 public class TestOfferPriceCalculator {
 
-    Product standardProduct = new Product("Tropicano","stdTropicano");
+    @Test
+    public void standardOfferCalculator() {
+        Product standardProduct = new Product("Tropicano", "stdTropicano");
+        standardProduct = standardProduct.salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(10)));
+        CartItem cartItem = new CartItem(10, standardProduct);
+
+        Assert.assertEquals(Price.PricePerQuantityUnit(BigDecimal.valueOf(100)), cartItem.calculatePrice().get(0)
+                .getSalePrice());
+
+        standardProduct = standardProduct.salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+        cartItem = new CartItem(5, standardProduct);
+        Assert.assertEquals(Price.PricePerQuantityUnit(BigDecimal.valueOf(9.95)), cartItem.calculatePrice().get(0)
+                .getSalePrice());
+    }
 
     @Test
-    public void standardOfferCalculator(){
-        standardProduct = standardProduct.salePrice(new Price(BigDecimal.valueOf(10),Unit.QUANTITY));
-        CartItem cartItem = new CartItem(10,standardProduct);
+    public void testSizeOfCartItemsForXQuantityAtYPriceOffer() {
+        Product offerProduct = new Product("Wallet", "ProductCodeForWallets").salePrice(Price.PricePerQuantityUnit
+                (BigDecimal.valueOf(2)));
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(1)), 3));
+        CartItem cartItem = new CartItem(10, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(4, cartItems.size());
 
-        Assert.assertEquals(new Price(BigDecimal.valueOf(100),Unit.QUANTITY),cartItem.calculatePrice());
+        cartItem = new CartItem(11, offerProduct);
+        cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(5, cartItems.size());
 
-        standardProduct = standardProduct.salePrice(new Price(BigDecimal.valueOf(1.99),Unit.QUANTITY));
-        cartItem = new CartItem(5,standardProduct);
-        Assert.assertEquals(new Price(BigDecimal.valueOf(9.95),Unit.QUANTITY),cartItem.calculatePrice());
+    }
+
+
+    @Test
+    public void testCartItemOfferPriceForXQuantityAtYPriceOffer() {
+        Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
+                                   .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        CartItem cartItem = new CartItem(10, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(cartItems.get(0).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(4)));
+        Assert.assertEquals(cartItems.get(0).getQuantity(),3,0);
+    }
+
+    @Test
+    public void testCartItemStandardPriceForXQuantityAtYPriceOffer() {
+        Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
+                .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        CartItem cartItem = new CartItem(10, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(cartItems.get(3).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+        Assert.assertEquals(cartItems.get(3).getQuantity(),1,0);
+    }
+
+    @Test
+    public void testCartItemBillOutputXQuantityAtYPriceOffer() {
+        Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
+                .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        CartItem cartItem = new CartItem(10, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals("[quantity 3.0 @ 4, quantity 3.0 @ 4, quantity 3.0 @ 4, quantity 1.0 @ 1.99]",
+                cartItems.toString());
+    }
+
+
+    @Test
+    public void testSizeOfCartItemsForXWeightAtYPriceOffer() {
+        Product offerProduct = new Product("Apples", "ProductCodeForApples")
+                .salePrice(Price.PricePerWieghtedUnit(BigDecimal.valueOf(0.99)));
+
+        offerProduct.withOffer(new XWeightAtYPriceOffer(Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80)), 2));
+        CartItem cartItem = new CartItem(13.50F, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(2, cartItems.size());
+
+        cartItem = new CartItem(12, offerProduct);
+        cartItems = cartItem.calculatePrice();
+        Assert.assertEquals(1, cartItems.size());
+
+
+    }
+
+    @Test
+    public void testCartItemBillOutputXWeightAtYPriceOffer() {
+        Product offerProduct = new Product("Apples", "ProductCodeForApples")
+                .salePrice(Price.PricePerWieghtedUnit(BigDecimal.valueOf(0.99)));
+
+        offerProduct.withOffer(new XWeightAtYPriceOffer(Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80)), 2));
+        CartItem cartItem = new CartItem(13.50F, offerProduct);
+        List<CartItem> cartItems = cartItem.calculatePrice();
+        Assert.assertEquals("[quantity 12.0kg @ 21.6, quantity 1.5kg @ 1.485]",cartItems.toString());
     }
 
 

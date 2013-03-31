@@ -2,6 +2,8 @@ package com.shoppingcart.domain;
 
 import com.google.common.base.Preconditions;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Nthdimenzion
@@ -10,22 +12,50 @@ import com.google.common.base.Preconditions;
  */
 public class CartItem {
 
-    private int quantity;
+    private float quantity;
     private Product product;
 
     private Price salePrice;
 
+    private Price productSalePrice;
 
-    public CartItem(int quantity, Product product) {
+
+    public CartItem(float quantity, Product product) {
         Preconditions.checkArgument(quantity > 0);
         Preconditions.checkNotNull(product.getSalePrice());
         this.quantity = quantity;
+        this.productSalePrice = product.getSalePrice();
         this.product = product;
     }
 
 
-    public Price calculatePrice() {
-        salePrice = product.getSalePrice().multipliedByQuantity(quantity);
+    List<CartItem> calculatePrice() {
+        IOffer offer = product.getOffer();
+        return offer.applyOffer(this);
+    }
+
+    CartItem standardSalePrice(){
+        salePrice = productSalePrice.multipliedByQuantity(quantity);
+        return this;
+    }
+
+    public Price getSalePrice() {
         return salePrice;
+    }
+
+    public void setSalePrice(Price salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public float getQuantity() {
+        return quantity;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public String toString(){
+        return "quantity " + quantity +  salePrice.getPerUnit() + " @ " + salePrice;
     }
 }

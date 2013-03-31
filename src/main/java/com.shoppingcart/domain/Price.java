@@ -19,6 +19,16 @@ public final class Price {
         this.perUnit = perUnit;
     }
 
+    public static Price PricePerQuantityUnit(BigDecimal money){
+        Price price = new Price(money,Unit.QUANTITY);
+        return price;
+    }
+
+    public static Price PricePerWieghtedUnit(BigDecimal money){
+        Price price = new Price(money,Unit.WEIGHTED);
+        return price;
+    }
+
     BigDecimal getMoney() {
         return money;
     }
@@ -35,8 +45,12 @@ public final class Price {
         this.perUnit = perUnit;
     }
 
-    public Price multipliedByQuantity(int quantity){
+    public Price multipliedByQuantity(float quantity){
         return new Price(money.multiply(new BigDecimal(quantity)),perUnit);
+    }
+
+    public Price dividedByQuantity(float quantity){
+        return new Price(money.divide(new BigDecimal(quantity)),perUnit);
     }
 
     @Override
@@ -57,5 +71,9 @@ public final class Price {
         int result = money != null ? money.hashCode() : 0;
         result = 31 * result + (perUnit != null ? perUnit.hashCode() : 0);
         return result;
+    }
+
+    public String toString(){
+        return money.toPlainString() ;
     }
 }

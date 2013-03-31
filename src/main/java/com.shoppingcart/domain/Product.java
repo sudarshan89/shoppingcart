@@ -13,15 +13,13 @@ public class Product {
 
     private Price salePrice;
 
+    private IOffer offer = new StandardOffer();
 
     public Product(String name, String code) {
         this.name = name;
         this.code = code;
     }
 
-    Price getSalePrice() {
-        return salePrice;
-    }
 
     public Product salePrice(Price salePrice){
         this.salePrice = salePrice;
@@ -29,7 +27,33 @@ public class Product {
         return this;
     }
 
+    Price getSalePrice() {
+        return salePrice;
+    }
 
+    public Product withOffer(IOffer offer){
+        this.offer = offer;
+        return this;
+    }
 
+    public IOffer getOffer(){
+        return offer;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        if (code != null ? !code.equals(product.code) : product.code != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return code != null ? code.hashCode() : 0;
+    }
 }
