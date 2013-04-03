@@ -12,39 +12,35 @@ import java.util.List;
  */
 public class XWeightAtYPriceOffer implements IOffer {
 
-    private final float offerWeight;
+    private final float unitOfOfferWeight;
     private final Price offerPrice;
 
-    public XWeightAtYPriceOffer(Price offerPrice, float offerWeight) {
+    public XWeightAtYPriceOffer(float unitOfOfferWeight, Price offerPrice) {
         this.offerPrice = offerPrice;
-        this.offerWeight = offerWeight;
+        this.unitOfOfferWeight = unitOfOfferWeight;
     }
 
     @Override
     public List<CartItem> applyOffer(CartItem cartItem) {
         List<CartItem> cartItems = Lists.newArrayList();
-        float weight = cartItem.getQuantity();
-        float weightOfItemsWithOfferPrice = weight - (weight % this.offerWeight);
-        cartItems.addAll(itemsWithOfferPrice(cartItem, weightOfItemsWithOfferPrice));
-        float weightOfItemsWithStandardPrice = weight - weightOfItemsWithOfferPrice;
+        float totalWeight = cartItem.getQuantity();
+        float weightOfItemsWithOfferPrice = totalWeight - (totalWeight % this.unitOfOfferWeight);
+        cartItems.add(cartItemWithOfferPrice(cartItem, weightOfItemsWithOfferPrice));
+        float weightOfItemsWithStandardPrice = totalWeight - weightOfItemsWithOfferPrice;
         if (weightOfItemsWithStandardPrice > 0)
-            cartItems.addAll(itemsWithStandardPrice(cartItem, weightOfItemsWithStandardPrice));
+            cartItems.add(cartItemsWithStandardPrice(cartItem, weightOfItemsWithStandardPrice));
         return cartItems;
     }
 
-    private List<CartItem> itemsWithStandardPrice(CartItem cartItem, float weightOfItemsWithStandardPrice) {
-        List<CartItem> cartItems = Lists.newArrayList();
+    private CartItem cartItemsWithStandardPrice(CartItem cartItem, float weightOfItemsWithStandardPrice) {
         CartItem standardPricedCartItem = new CartItem(weightOfItemsWithStandardPrice, cartItem.getProduct());
-        standardPricedCartItem = standardPricedCartItem.standardSalePrice();
-        cartItems.add(standardPricedCartItem);
-        return cartItems;
+        return standardPricedCartItem;
     }
 
-    private List<CartItem> itemsWithOfferPrice(CartItem cartItem, float weightOfItemsWithOfferPrice) {
-        List<CartItem> cartItems = Lists.newArrayList();
-        CartItem offerPricedCartItem = new CartItem(weightOfItemsWithOfferPrice, cartItem.getProduct());
-        offerPricedCartItem.setSalePrice(offerPrice.multipliedByQuantity(weightOfItemsWithOfferPrice));
-        cartItems.add(offerPricedCartItem);
-        return cartItems;
+    private CartItem cartItemWithOfferPrice(CartItem cartItem, float weightOfItemsWithOfferPrice) {
+        float quantityAfterFactoringInUnitOfOffer = weightOfItemsWithOfferPrice / unitOfOfferWeight;
+        CartItem offerPricedCartItem = CartItem.newCartItemWithOfferPrice(weightOfItemsWithOfferPrice, cartItem,
+                offerPrice.multipliedByQuantity(quantityAfterFactoringInUnitOfOffer));
+        return offerPricedCartItem;
     }
 }

@@ -25,7 +25,14 @@ public class CartItem {
         Preconditions.checkNotNull(product.getSalePrice());
         this.quantity = quantity;
         this.productSalePrice = product.getSalePrice();
+        this.salePrice = this.productSalePrice.multipliedByQuantity(this.quantity);
         this.product = product;
+    }
+
+    public static CartItem newCartItemWithOfferPrice(float quantity, CartItem originalCartItem, Price offerPrice){
+        CartItem cartItem =  new CartItem(quantity,originalCartItem.getProduct());
+        cartItem.setSalePrice(offerPrice);
+        return cartItem;
     }
 
 

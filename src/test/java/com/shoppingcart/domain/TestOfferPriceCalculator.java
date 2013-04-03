@@ -33,28 +33,28 @@ public class TestOfferPriceCalculator {
     public void testSizeOfCartItemsForXQuantityAtYPriceOffer() {
         Product offerProduct = new Product("Wallet", "ProductCodeForWallets").salePrice(Price.PricePerQuantityUnit
                 (BigDecimal.valueOf(2)));
-        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(1)), 3));
+        offerProduct.withOffer(new XQuantityAtYPriceOffer( 3,Price.PricePerQuantityUnit(BigDecimal.valueOf(1))));
         CartItem cartItem = new CartItem(10, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
-        Assert.assertEquals(4, cartItems.size());
+        Assert.assertEquals(2, cartItems.size());
 
         cartItem = new CartItem(11, offerProduct);
         cartItems = cartItem.calculatePrice();
-        Assert.assertEquals(5, cartItems.size());
+        Assert.assertEquals(2, cartItems.size());
 
     }
 
 
     @Test
-    public void testCartItemOfferPriceForXQuantityAtYPriceOffer() {
+    public void testSalesPriceOfCartItemWithOfferPriceForXQuantityAtYPriceOffer() {
         Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
                                    .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
 
-        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(3,Price.PricePerQuantityUnit(BigDecimal.valueOf(4))));
         CartItem cartItem = new CartItem(10, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
-        Assert.assertEquals(cartItems.get(0).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(4)));
-        Assert.assertEquals(cartItems.get(0).getQuantity(),3,0);
+        Assert.assertEquals(cartItems.get(0).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(12)));
+        Assert.assertEquals(cartItems.get(0).getQuantity(),9,0);
     }
 
     @Test
@@ -62,11 +62,11 @@ public class TestOfferPriceCalculator {
         Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
                 .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
 
-        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        offerProduct.withOffer(new XQuantityAtYPriceOffer( 3,Price.PricePerQuantityUnit(BigDecimal.valueOf(4))));
         CartItem cartItem = new CartItem(10, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
-        Assert.assertEquals(cartItems.get(3).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
-        Assert.assertEquals(cartItems.get(3).getQuantity(),1,0);
+        Assert.assertEquals(cartItems.get(1).getSalePrice(),Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
+        Assert.assertEquals(cartItems.get(1).getQuantity(),1,0);
     }
 
     @Test
@@ -74,10 +74,10 @@ public class TestOfferPriceCalculator {
         Product offerProduct = new Product("Wallet", "ProductCodeForWallets")
                 .salePrice(Price.PricePerQuantityUnit(BigDecimal.valueOf(1.99)));
 
-        offerProduct.withOffer(new XQuantityAtYPriceOffer(Price.PricePerQuantityUnit(BigDecimal.valueOf(4)), 3));
+        offerProduct.withOffer(new XQuantityAtYPriceOffer(3,Price.PricePerQuantityUnit(BigDecimal.valueOf(4))));
         CartItem cartItem = new CartItem(10, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
-        Assert.assertEquals("[quantity 3.0 @ 4, quantity 3.0 @ 4, quantity 3.0 @ 4, quantity 1.0 @ 1.99]",
+        Assert.assertEquals("[quantity 9.0 @ 12, quantity 1.0 @ 1.99]",
                 cartItems.toString());
     }
 
@@ -87,7 +87,7 @@ public class TestOfferPriceCalculator {
         Product offerProduct = new Product("Apples", "ProductCodeForApples")
                 .salePrice(Price.PricePerWieghtedUnit(BigDecimal.valueOf(0.99)));
 
-        offerProduct.withOffer(new XWeightAtYPriceOffer(Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80)), 2));
+        offerProduct.withOffer(new XWeightAtYPriceOffer(2,Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80))));
         CartItem cartItem = new CartItem(13.50F, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
         Assert.assertEquals(2, cartItems.size());
@@ -104,10 +104,10 @@ public class TestOfferPriceCalculator {
         Product offerProduct = new Product("Apples", "ProductCodeForApples")
                 .salePrice(Price.PricePerWieghtedUnit(BigDecimal.valueOf(0.99)));
 
-        offerProduct.withOffer(new XWeightAtYPriceOffer(Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80)), 2));
+        offerProduct.withOffer(new XWeightAtYPriceOffer(2,Price.PricePerWieghtedUnit(BigDecimal.valueOf(1.80))));
         CartItem cartItem = new CartItem(13.50F, offerProduct);
         List<CartItem> cartItems = cartItem.calculatePrice();
-        Assert.assertEquals("[quantity 12.0kg @ 21.6, quantity 1.5kg @ 1.485]",cartItems.toString());
+        Assert.assertEquals("[quantity 12.0kg @ 10.8, quantity 1.5kg @ 1.485]",cartItems.toString());
     }
 
 
