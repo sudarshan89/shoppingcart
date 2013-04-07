@@ -12,21 +12,9 @@ import java.math.RoundingMode;
 public final class Price {
 
     private BigDecimal money;
-    private Unit perUnit;
 
-    public Price(BigDecimal money, Unit perUnit) {
+    public Price(BigDecimal money) {
         this.money = money;
-        this.perUnit = perUnit;
-    }
-
-    public static Price PricePerQuantityUnit(BigDecimal money){
-        Price price = new Price(money,Unit.QUANTITY);
-        return price;
-    }
-
-    public static Price PricePerWieghtedUnit(BigDecimal money){
-        Price price = new Price(money,Unit.WEIGHTED);
-        return price;
     }
 
     BigDecimal getMoney() {
@@ -37,20 +25,13 @@ public final class Price {
         this.money = money;
     }
 
-    Unit getPerUnit() {
-        return perUnit;
-    }
-
-    void setPerUnit(Unit perUnit) {
-        this.perUnit = perUnit;
-    }
 
     public Price multipliedByQuantity(float quantity){
-        return new Price(money.multiply(new BigDecimal(quantity)),perUnit);
+        return new Price(money.multiply(new BigDecimal(quantity)));
     }
 
     public Price dividedByQuantity(float quantity){
-        return new Price(money.divide(new BigDecimal(quantity)),perUnit);
+        return new Price(money.divide(new BigDecimal(quantity)));
     }
 
     @Override
@@ -61,7 +42,6 @@ public final class Price {
         Price price = (Price) o;
 
         if (money != null ? !money.equals(price.money) : price.money != null) return false;
-        if (perUnit != price.perUnit) return false;
 
         return true;
     }
@@ -69,7 +49,6 @@ public final class Price {
     @Override
     public int hashCode() {
         int result = money != null ? money.hashCode() : 0;
-        result = 31 * result + (perUnit != null ? perUnit.hashCode() : 0);
         return result;
     }
 

@@ -63,6 +63,6 @@ public class CartItem {
     }
 
     public String toString(){
-        return "quantity " + quantity +  salePrice.getPerUnit() + " @ " + salePrice;
+        return "quantity " + quantity  + " @ " + salePrice;
     }
 }
