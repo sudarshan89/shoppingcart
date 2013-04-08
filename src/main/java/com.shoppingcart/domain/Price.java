@@ -30,10 +30,6 @@ public final class Price {
         return new Price(money.multiply(new BigDecimal(quantity)));
     }
 
-    public Price dividedByQuantity(float quantity){
-        return new Price(money.divide(new BigDecimal(quantity)));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

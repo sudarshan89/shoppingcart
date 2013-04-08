@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class CartItem {
 
+    public static final int STANDARD_CART_ITEM = 0;
+    public static final int OFFER_CART_ITEM = 1;
     private float quantity;
     private Product product;
 
